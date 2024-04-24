@@ -48,98 +48,61 @@ int sort5(vector<int> vect, vector<int>& index, int i)
 
 
 
-int newSort(vectInt vect, vectInt &index, int i)
-{
+int newSort(vector<int>& vect, vector<int>& index, int i) {
     i = 5 * i; 
-    vector<int> a = {vect.at(index.at(i)), vect.at(index.at(i + 1)), vect.at(index.at(i + 2)), vect.at(index.at(i + 3)), vect.at(index.at(i + 4))};
-    vector<int> indexa = {index[i], index[i + 1], index[i + 2], index[i + 3], index[i + 4]};
+
     // Sort first two pairs
-    if (a[1] < a[0])
-    {
-        newSwap(a, 0, 1);
-        newSwap(indexa, i + 0, i + 1);
+    if (vect[index[i + 1]] < vect[index[i]]) {
+        swap(index[i], index[i + 1]);
     }
-    if (a[3] < a[2])
-    {
-        newSwap(a, 2, 3);
-        newSwap(indexa, i + 2, i + 3);
+    if (vect[index[i + 3]] < vect[index[i + 2]]) {
+        swap(index[i + 2], index[i + 3]);
     }
 
     // Sort pairs by larger element
-    if (a[3] < a[1])
-    {
-        a = {a[2], a[3], a[0], a[1], a[4]};
-        indexa = { indexa[i + 2], indexa[i + 3], indexa[i + 0], indexa[i + 1], indexa[i + 4]};
+    if (vect[index[i + 3]] < vect[index[i + 1]]) {
+        swap(index[i], index[i + 2]);
+        swap(index[i + 1], index[i + 3]);
     }
 
-    // A = [a,b,c,d,e] with a < b < d and c < d
-
-    // insert e into [a,b,d]
-    vector<int> b;
-    vector<int> indexb;
-    if (a[4] < a[1])
-    {                    // e < b
-        if (a[4] < a[0]) // e < a
-        {
-            b = {a[4], a[0], a[1], a[3], a[2]}; // B = [e,a,b,d]
-            indexb = {indexa[i + 4], indexa[i + 0], indexa[i + 1], indexa[i + 3], indexa[i + 2]};
+    // Insert e into [a,b,d]
+    int eIndex = index[i + 4];
+    int aIndex = index[i];
+    int bIndex = index[i + 1];
+    int dIndex = index[i + 3];
+    if (vect[eIndex] < vect[index[i + 1]]) {
+        if (vect[eIndex] < vect[index[i]]) {
+            swap(index[i], index[i + 4]);
+        } else {
+            swap(index[i + 1], index[i + 4]);
         }
-        else
-        {
-            b = {a[0], a[4], a[1], a[3], a[2]}; // B = [a,e,b,d]
-            indexb = {indexa[i + 0], indexa[i + 4], indexa[i + 1], indexa[i + 3], indexa[i + 2]};
-        }
-    }
-    else
-    {                    // e > b
-        if (a[4] < a[3]) // e < d
-        {
-            b = {a[0], a[1], a[4], a[3], a[2]}; // B = [a,b,e,d]
-            indexb = {indexa[i + 0], indexa[i + 1], indexa[i + 4], indexa[i + 3], indexa[i + 2]};
-        }
-        else
-        {
-            b = {a[0], a[1], a[3], a[4], a[2]}; // B = [a,b,d,e]
-            indexb = {indexa[i + 0], indexa[i + 1], indexa[i + 3], indexa[i + 4], indexa[i + 2]};
+    } else {
+        if (vect[eIndex] < vect[index[i + 3]]) {
+            swap(index[i + 3], index[i + 4]);
         }
     }
 
-    // insert c into the first three elements of B
-    vector<int> c;
-    vector<int> indexc;
-    if (a[2] < b[1])
-    {
-        if (a[2] < b[0])
-        {
-            c = {a[2], b[0], b[1], b[2], b[3]};
-            indexc = {indexa[i + 2], indexb[i + 0], indexb[i + 1], indexb[i + 3], indexb[i + 4]};
+    // Insert c into the first three elements of B
+    int cIndex = index[i + 2];
+    int b0Index = index[i];
+    int b1Index = index[i + 1];
+    int b2Index = index[i + 3];
+    if (vect[cIndex] < vect[index[i + 1]]) {
+        if (vect[cIndex] < vect[index[i]]) {
+            swap(index[i], index[i + 2]);
+        } else {
+            swap(index[i + 1], index[i + 2]);
         }
-        else
-        {
-            c = {b[0], a[2], b[1], b[2], b[3]};
-            indexc = {indexb[i + 0], indexa[i + 2], indexb[i + 1], indexb[i + 3], indexb[i + 4]};
-        }
-    }
-    else
-    {
-        if (a[2] < b[2])
-        {
-            c = {b[0], b[1], a[2], b[2], b[3]};
-            indexc = {indexb[i + 0], indexb[i + 1], indexa[i + 2], indexb[i + 3], indexb[i + 4]};
-        }
-        else
-        {
-            c = {b[0], b[1], b[2], a[2], b[3]};
-            indexc = {indexb[i + 0], indexb[i + 1], indexb[i + 2], indexa[i + 3], indexb[i + 4]};
+    } else {
+        if (vect[cIndex] < vect[index[i + 3]]) {
+            swap(index[i + 3], index[i + 2]);
         }
     }
-    for (int j = 0; j < 5; j++)
-    {
-        index.at(i + j) = indexc[j];
-    }  
-
-    return index[i + 2];
+    
+    // Return the index of the median element
+    return index[i + 3];
 }
+
 
 int sortGroupsOf5(vectInt vect, vectInt& index)
 {
