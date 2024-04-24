@@ -143,10 +143,10 @@ int median(vectInt& vect, vectInt& index)
 }
 
 
-int pivPartition(int index, vectInt& vect, int start, int end)
+int pivPartition(int position, vectInt& vect, int start, int end)
 {   
     
-    newSwap (vect, index, end);
+    newSwap (vect, position, end);
     int newPivot = vect[end];
     int i = start - 1;
 
@@ -164,6 +164,26 @@ int pivPartition(int index, vectInt& vect, int start, int end)
     return i + 1;
 }
 
+int partition(vectInt& arr, int low, int high, int pivot) {
+    int left = low;
+    int right = high;
+
+    while (left <= right) {
+        while (arr[left] < pivot) {
+            left++;
+        }
+        while (arr[right] > pivot) {
+            right--;
+        }
+        if (left <= right) {
+            swap(arr[left], arr[right]);
+            left++;
+            right--;
+        }
+    }
+    return left;
+}
+
 
 int quickSelect(vectInt& vect, vectInt& index, int p, int q, int i)
 {
@@ -171,7 +191,7 @@ int quickSelect(vectInt& vect, vectInt& index, int p, int q, int i)
         return index[p];
 
     int pivot = median(vect, index);
-    int r = pivPartition (pivot, vect, p, q);
+    int r = pivPartition (vect[pivot], vect, p, q);
     int k = r - p + 1;
 
     if (i == k)
@@ -194,6 +214,12 @@ int main()
         vect.push_back(i+1);
         index.push_back(i);
     }
+
+
+    //cout << "med: " << vect.at(4) << endl;
+    //int x = pivPartition(4, vect, 0, N-1);
+
+    cout <<endl;
 
     int k = quickSelect(vect, index, 0, N-1, 25 );
     cout <<"k: " <<k <<endl;
