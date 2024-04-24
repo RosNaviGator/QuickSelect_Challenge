@@ -4,9 +4,10 @@
 #include <random>
 #include <chrono>
 
-#define seed 24042024
+
 #define N 100
 #define MAX 1000
+#define seed chrono::system_clock::now().time_since_epoch().count()
 
 using namespace std;
 using vectInt = vector<int>;
@@ -145,43 +146,29 @@ int median(vectInt& vect, vectInt& index)
 
 int pivPartition(int position, vectInt& vect, int start, int end)
 {   
-    
+    cout <<"pivot: " << vect[position] <<endl;
     newSwap (vect, position, end);
     int newPivot = vect[end];
     int i = start - 1;
 
-    for (int j = start; j < end; ++j) 
+    for (int j = start; j <= end; ++j) 
     {
-        if (vect[j] <= newPivot)
+        if (vect[j] < newPivot)
         {
             i++;
-            newSwap (vect, i, j);
+            newSwap(vect, i, j);
         }
-    }
+        else if (vect[j] == newPivot && j != end)
+        {
+            newSwap(vect, i + 1, j);
+            // Incrementa 'i' per includere l'elemento uguale al pivot
+            i++;
+        }
+    }      
 
     // Swap the pivot to its correct position
-    newSwap (vect, i+1, end);
+    newSwap(vect, i + 1, end);
     return i + 1;
-}
-
-int partition(vectInt& arr, int low, int high, int pivot) {
-    int left = low;
-    int right = high;
-
-    while (left <= right) {
-        while (arr[left] < pivot) {
-            left++;
-        }
-        while (arr[right] > pivot) {
-            right--;
-        }
-        if (left <= right) {
-            swap(arr[left], arr[right]);
-            left++;
-            right--;
-        }
-    }
-    return left;
 }
 
 
@@ -191,7 +178,7 @@ int quickSelect(vectInt& vect, vectInt& index, int p, int q, int i)
         return index[p];
 
     int pivot = median(vect, index);
-    int r = pivPartition (vect[pivot], vect, p, q);
+    int r = pivPartition (pivot, vect, p, q);
     int k = r - p + 1;
 
     if (i == k)
@@ -208,20 +195,31 @@ int quickSelect(vectInt& vect, vectInt& index, int p, int q, int i)
 
 int main()
 {
+    
+    int m = 10;
     vectInt vect, index;
-    for(int i=0; i<N; i++)
+    for(int i=0; i<m; i++)
     {
         vect.push_back(i+1);
         index.push_back(i);
     }
+    vect.at(1)=8;
+    shuffle(vect.begin(), vect.end(), default_random_engine(seed));
+
 
 
     //cout << "med: " << vect.at(4) << endl;
     //int x = pivPartition(4, vect, 0, N-1);
 
     cout <<endl;
+    printVec(vect);
+    int x = pivPartition(2, vect, 0, m-1);
+    cout << "x: " << x <<endl;
+    printVec(vect);
 
-    int k = quickSelect(vect, index, 0, N-1, 25 );
-    cout <<"k: " <<k <<endl;
+
+
+    //int k = quickSelect(vect, index, 0, N-1, 80 );
+    //cout <<"k: " <<k <<endl;
 
 }
