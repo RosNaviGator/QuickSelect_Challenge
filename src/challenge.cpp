@@ -53,16 +53,16 @@ int newSort(vector<int>& vect, vector<int>& index, int i) {
 
     // Sort first two pairs
     if (vect[index[i + 1]] < vect[index[i]]) {
-        swap(index[i], index[i + 1]);
+        newSwap(index, i, i+1);
     }
     if (vect[index[i + 3]] < vect[index[i + 2]]) {
-        swap(index[i + 2], index[i + 3]);
+        newSwap(index, i+2, i+3);
     }
 
     // Sort pairs by larger element
     if (vect[index[i + 3]] < vect[index[i + 1]]) {
-        swap(index[i], index[i + 2]);
-        swap(index[i + 1], index[i + 3]);
+        newSwap(index, i , i+2);
+        newSwap(index, i , i+3);
     }
 
     // Insert e into [a,b,d]
@@ -72,30 +72,30 @@ int newSort(vector<int>& vect, vector<int>& index, int i) {
     int dIndex = index[i + 3];
     if (vect[eIndex] < vect[index[i + 1]]) {
         if (vect[eIndex] < vect[index[i]]) {
-            swap(index[i], index[i + 4]);
+            newSwap(index, i, i+4);
         } else {
-            swap(index[i + 1], index[i + 4]);
+            newSwap(index, i, i+4);
         }
     } else {
         if (vect[eIndex] < vect[index[i + 3]]) {
-            swap(index[i + 3], index[i + 4]);
+            newSwap(index, i+3, i+4);
         }
     }
 
     // Insert c into the first three elements of B
-    int cIndex = index[i + 2];
+    int cIndex = index[i + 2]; 
     int b0Index = index[i];
     int b1Index = index[i + 1];
     int b2Index = index[i + 3];
     if (vect[cIndex] < vect[index[i + 1]]) {
         if (vect[cIndex] < vect[index[i]]) {
-            swap(index[i], index[i + 2]);
+            newSwap(index, i, i+2);
         } else {
-            swap(index[i + 1], index[i + 2]);
+            newSwap(index, i+1, i+2);
         }
     } else {
         if (vect[cIndex] < vect[index[i + 3]]) {
-            swap(index[i + 3], index[i + 2]);
+            newSwap(index, i+3, i+2);
         }
     }
     
