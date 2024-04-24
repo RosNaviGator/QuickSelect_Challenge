@@ -130,7 +130,7 @@ int median(vectInt& vect, vectInt& index)
 {
    if (index.size() < 5)
    {
-       return index[index.size()];
+       return index[index.size()/2];
    }
    int end = index.size();
    int blocks = index.size()/5;
@@ -147,29 +147,27 @@ int median(vectInt& vect, vectInt& index)
 int pivPartition(int position, vectInt& vect, int start, int end)
 {   
     cout <<"pivot: " << vect[position] <<endl;
-    newSwap (vect, position, end);
+    newSwap(vect, position, end);
     int newPivot = vect[end];
     int i = start - 1;
 
-    for (int j = start; j <= end; ++j) 
+    for (int j = start; j <= end - 1; ++j) 
     {
         if (vect[j] < newPivot)
         {
             i++;
             newSwap(vect, i, j);
         }
-        else if (vect[j] == newPivot && j != end)
+        else if (vect[j] == newPivot)
         {
+            // Spostare solo l'elemento uguale al pivot al centro
             newSwap(vect, i + 1, j);
-            // Incrementa 'i' per includere l'elemento uguale al pivot
-            i++;
         }
-    }      
-
-    // Swap the pivot to its correct position
+    }
     newSwap(vect, i + 1, end);
     return i + 1;
 }
+
 
 
 int quickSelect(vectInt& vect, vectInt& index, int p, int q, int i)
@@ -204,6 +202,8 @@ int main()
         index.push_back(i);
     }
     vect.at(1)=8;
+    vect.at(2)=8;
+    vect.at(3)=8;
     shuffle(vect.begin(), vect.end(), default_random_engine(seed));
 
 
@@ -213,7 +213,7 @@ int main()
 
     cout <<endl;
     printVec(vect);
-    int x = pivPartition(2, vect, 0, m-1);
+    int x = pivPartition(1, vect, 0, m-1);
     cout << "x: " << x <<endl;
     printVec(vect);
 
