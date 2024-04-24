@@ -48,19 +48,23 @@ int sort5(vector<int> vect, vector<int>& index, int i)
 
 
 
-int newSort(vector<int>& vect, vector<int>& index, int i) {
+int newSort(vectInt& vect, vectInt& index, int i) 
+{
     i = 5 * i; 
 
     // Sort first two pairs
-    if (vect[index[i + 1]] < vect[index[i]]) {
+    if (vect[index[i + 1]] < vect[index[i]]) 
+    {
         newSwap(index, i, i+1);
     }
-    if (vect[index[i + 3]] < vect[index[i + 2]]) {
+    if (vect[index[i + 3]] < vect[index[i + 2]]) 
+    {
         newSwap(index, i+2, i+3);
     }
 
     // Sort pairs by larger element
-    if (vect[index[i + 3]] < vect[index[i + 1]]) {
+    if (vect[index[i + 3]] < vect[index[i + 1]]) 
+    {
         newSwap(index, i , i+2);
         newSwap(index, i , i+3);
     }
@@ -70,14 +74,21 @@ int newSort(vector<int>& vect, vector<int>& index, int i) {
     int aIndex = index[i];
     int bIndex = index[i + 1];
     int dIndex = index[i + 3];
-    if (vect[eIndex] < vect[index[i + 1]]) {
-        if (vect[eIndex] < vect[index[i]]) {
+    if (vect[eIndex] < vect[index[i + 1]]) 
+    {
+        if (vect[eIndex] < vect[index[i]]) 
+        {
             newSwap(index, i, i+4);
-        } else {
+        } 
+        else 
+        {
             newSwap(index, i, i+4);
         }
-    } else {
-        if (vect[eIndex] < vect[index[i + 3]]) {
+    } 
+    else 
+    {
+        if (vect[eIndex] < vect[index[i + 3]]) 
+        {
             newSwap(index, i+3, i+4);
         }
     }
@@ -87,14 +98,21 @@ int newSort(vector<int>& vect, vector<int>& index, int i) {
     int b0Index = index[i];
     int b1Index = index[i + 1];
     int b2Index = index[i + 3];
-    if (vect[cIndex] < vect[index[i + 1]]) {
-        if (vect[cIndex] < vect[index[i]]) {
+    if (vect[cIndex] < vect[index[i + 1]]) 
+    {
+        if (vect[cIndex] < vect[index[i]]) 
+        {
             newSwap(index, i, i+2);
-        } else {
+        } 
+        else 
+        {
             newSwap(index, i+1, i+2);
         }
-    } else {
-        if (vect[cIndex] < vect[index[i + 3]]) {
+    } 
+    else 
+    {
+        if (vect[cIndex] < vect[index[i + 3]]) 
+        {
             newSwap(index, i+3, i+2);
         }
     }
@@ -104,7 +122,7 @@ int newSort(vector<int>& vect, vector<int>& index, int i) {
 }
 
 
-int sortGroupsOf5(vectInt vect, vectInt& index)
+int sortGroupsOf5(vectInt& vect, vectInt& index)
 {
    if (index.size() < 5)
    {
@@ -136,79 +154,60 @@ int partition(vectInt& vect, int begin, int end)
 }
 
 
-int select(vectInt& vect, int begin, int end, int i)
-{
-    if (begin == end)
-        return vect.at(begin);  
-    int pivot = partition(vect, begin, end);
-    int k = pivot - begin +1;
+int pivPartition(int index, vectInt& vect, int start, int end)
+{   
+    
+    swap (vect.at(index), vect.at(end));
+    int newPivot = vect.at(end);
+    int i = start - 1;
 
-    if (i==k) 
-        return vect.at(pivot);
-    else 
-        if (i<k)
-            return select(vect, begin, pivot-1, i);
-        else 
-            return select(vect, pivot+1, end, i-k);
+    for (int j = start; j < end; ++j) // Changed end - 1 to end
+    {
+        if (vect.at(j) <= newPivot)
+        {
+            i++;
+            swap (vect.at(i), vect.at(j));
+        }
+    }
 
+    // Swap the pivot to its correct position
+    swap (vect.at(i+1), vect.at(end));
+    return i + 1;
 }
 
 
+int select(vectInt& vect, vectInt& index, int p, int q, int i)
+{
+    if (p >= q)
+        return index[p];
+
+    int pivot = sortGroupsOf5(vect, index);
+    int r = pivPartition (pivot, vect, p, q);
+    int k = r - p + 1;
+
+    if (i == k)
+        return index[r];
+    else if (i < k)
+        {   
+            return select(vect, index, p, r - 1, i);
+        } 
+    else
+        {
+            return select(vect, index, r + 1, q, i - k);
+        }      
+}
+
 int main()
 {
-    vectInt vector1, vector2, index;
-    srand(time(NULL));
+    vectInt vect, index;
 
-    llu counter5=0, newCounter=0;
+    for(int i=0; i<N; i++)
+    {
+        vect.push_back(i+1);
+        index.push_back(i);
+    }
 
-    for(int j=0; j< MAX; j++)
-        {
-            vector1.clear();
-            index.clear();
-            for(int i=0; i<1000; i++)
-            {
-                vector1.push_back(i+1);
-                index.push_back(i);
-            }
+    int k = select(vect, index, 0, N-1, 25 );
+    cout <<endl <<"k: " <<k <<endl;
 
-
-            shuffle(vector1.begin(), vector1.end(), default_random_engine(seed+j));
-
-            for(int i=0; i<5; i++)
-            cout << " " <<vector1.at(i);
-
-            cout <<endl;
-
-            auto start = chrono::high_resolution_clock::now();
-            int y = sort5(vector1, index, 0);
-            auto end = chrono::high_resolution_clock::now();
-            auto duration = chrono::duration_cast<chrono::nanoseconds>(end-start);
-            counter5 += duration.count();
-            //cout << y <<endl;
-
-            auto start2 = chrono::high_resolution_clock::now();
-            int x = newSort(vector1, index, 0);
-            auto end2 = chrono::high_resolution_clock::now();
-            auto duration2 = chrono::duration_cast<chrono::nanoseconds>(end2-start2);
-            newCounter += duration2.count();
-            //cout << y <<endl;
-            if(x!=y)
-                cout <<"error!!!!!!!";
-        }
-        llu mean5 = counter5/static_cast<float>(MAX);
-        llu newMean = newCounter/ static_cast<float>(MAX);
-
-        cout <<endl <<"mean5: " <<mean5;
-        cout <<endl <<"newMean: " <<newMean;
-
-
-    // printVec(vector1);
-
-        // int x = sortGroupsOf5(vector1, index);
-
-        //cout << "Median position: " << x << endl;
-        //cout << "Median: " << vector1.at(x) << endl;
-    // printVec(vector1);
-        
-    //!!!!!!!!miss main select 
 }
