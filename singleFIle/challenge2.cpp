@@ -1,116 +1,132 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <random>
-#include <chrono>
+#include <algorithm>
 
-
-#define N 100
-#define MAX 1000
-#define seed chrono::system_clock::now().time_since_epoch().count()
-
-using namespace std;
-using vectInt = vector<int>;
-using llu = long long unsigned int;
-
-
-void newSwap(vectInt& vect, int i, int j)
+// Function to swap two elements in a vector
+void newSwap(std::vector<int>& vect, int i, int j)
 {
     int temp = vect[i];
     vect[i] = vect[j];
     vect[j] = temp;
 }
 
-void printVec(vectInt& vect)
-{
-    for(llu i=0; i< vect.size(); i++)
-    {
-        cout << vect[i] <<" ";
+
+// creat ordered vector of int
+void fillArray(int size, std::vector<int> &array) {
+    for (int i = 0; i < size; ++i) {
+        array.push_back(i);
     }
-    cout << endl << "size is " << vect.size() <<endl;
-    return;
 }
 
-int bubbleSort(vectInt& values, vectInt& index, int block) 
+// array print
+void printArray(std::vector<int> &array) {
+    for (int i = 0; i < array.size(); ++i) {
+        std::cout << array[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+// array shuffle
+void shuffleArray(std::vector<int> &array, int seed) {
+    std::shuffle(array.begin(), array.end(), std::default_random_engine(seed));
+}
+
+// select random pivot
+int randomPivot(int p, int q) {
+    return rand() % (q - p + 1) + p;
+}
+
+// Function to randomly partition the array
+int rand_partition(std::vector<int> &a, int p, int q)
 {
-    for( int i = 0; i < 5-1; i++)
+    // Select a random pivot element
+    int r = randomPivot(p, q);
+    newSwap(a, r, q);
+
+    int x = a[q];
+    int i = p - 1;
+
+    // Partition the array around the pivot element
+    for (int j = p; j < q; ++j)
     {
-        for(int j = 0; j < 5-i-1; j++)
+        if (a[j] <= x)
         {
-            if(values[index[j+5*block]] > values[index[j+1+ 5*block]])
-            {
-                swap(index[j+5*block], index[j+1+ 5*block]);
-            }
+            i++;
+            newSwap(a, i, j);
         }
     }
-    return index[2+5*block];
+
+    newSwap(a, i + 1, q);
+    return i + 1;
 }
 
-
-int sort5(vectInt& vect, vectInt& index, int i) 
+// Function to find the i-th smallest element in the array with random pivot
+int rand_select(std::vector<int> &a, int p, int q, int i)
 {
-    for (int j = i * 5; j < 5 * (i + 1) - 1; j++) 
-    {
-        for (int z = i * 5; z < 5 * (i + 1) - j - 1; z++) 
-        {
-            if (vect[index[z]] > vect[index[z + 1]]) 
-            {
-                swap(index[z], index[z + 1]);
-            }
-        }
-    }
+    // Base case: If the array has only one element
+    if (p == q)
+        return a[p];
 
-    cout <<"sorting ith block : " << i <<endl;
-    for(int j=5*i; j< 5*(i+1); j++)
-    {
-        cout<< " " << index.at(j);
-    }
-    cout<<endl;
-    return (index[5*i+2]);
+    // Partition the array and find the rank of the pivot element
+    int r = rand_partition(a, p, q);
+    int k = r - p + 1;
 
+    // If the rank of the pivot element is equal to i, return the pivot element
+    if (i == k)
+        return a[r];
+    // If the rank of the pivot element is greater than i, recursively find the i-th smallest element in the left subarray
+    else if (i < k)
+        return rand_select(a, p, r - 1, i);
+    // If the rank of the pivot element is less than i, recursively find the (i-k)-th smallest element in the right subarray
+    else
+        return rand_select(a, r + 1, q, i - k);
 }
 
 
-void moveElement(std::vector<int>& vec, int fromIndex, int toIndex) {
+void moveElement(std::vector<int>& vect, int fromIndex, int toIndex) {
         // Temporarily store the element to be moved
-    int valueToMove = vec[fromIndex];
+    int valueToMove = vect[fromIndex];
 
     // Move elements to the right
-    if (fromIndex < toIndex) {
-        for (int i = fromIndex; i < toIndex; ++i) {
-            vec[i] = vec[i + 1];
+    if (fromIndex < toIndex)
+    {
+        for (int i = fromIndex; i < toIndex; ++i)
+        {
+            vect[i] = vect[i + 1];
         }
     }
     // Move elements to the left
-    else {
-        for (int i = fromIndex; i > toIndex; --i) {
-            vec[i] = vec[i - 1];
+    else
+    {
+        for (int i = fromIndex; i > toIndex; --i)
+        {
+            vect[i] = vect[i + 1];
         }
     }
 
     // Place the element at the new position
-    vec[toIndex] = valueToMove;
+    vect[toIndex] = valueToMove;
 }
 
-
-
-int newSort(vector<int> &vect, vector<int> &index, int i)
+// Sorting 5 entries vector (efficient in this case)
+int newSort(std::vector<int> &vect, std::vector<int> &index, int i)
 {
     i = 5 * i;  
 
     if (vect[index[i + 1]] < vect[index[i]])
     {
-        swap(index[i], index[i + 1]);
+        std::swap(index[i], index[i + 1]);
     }
     if (vect[index[i + 3]] < vect[index[i + 2]])
     {
-        swap(index[i + 2], index[i + 3]);
+        std::swap(index[i + 2], index[i + 3]);
     }
 
     if (vect[index[i + 3]] < vect[index[i + 1]])
     {
-        swap(index[i], index[i + 2]);
-        swap(index[i + 1], index[i + 3]);
+        std::swap(index[i], index[i + 2]);
+        std::swap(index[i + 1], index[i + 3]);
     }
 
     if (vect[index[i + 4]] < vect[index[i + 1]])
@@ -168,9 +184,7 @@ int newSort(vector<int> &vect, vector<int> &index, int i)
 
 
 
-    
-
-int median(vectInt& vect, vectInt& index)
+int median(std::vector<int>& vect, std::vector<int>& index)
 {
    if (index.size() < 5)
    {
@@ -181,8 +195,8 @@ int median(vectInt& vect, vectInt& index)
        return index[y];
    }
    int blocks = index.size()/5;
-   vectInt vect2;
-   for(int i=0; i<blocks; i++)
+   std::vector<int> vect2;
+   for(int i=0; i<blocks; ++i)
    {
     vect2.push_back(newSort(vect, index, i));
    } 
@@ -190,119 +204,85 @@ int median(vectInt& vect, vectInt& index)
    //printVec(vect2);
    //printVec(vect2);
    return median(vect, vect2);
-    
+
 }
 
 
-int pivPartition(vectInt& vect, vectInt& index, int start, int end, int pivotPos)
-{   
-    
-    swap (vect.at(pivotPos), vect.at(end));
-    int pivot = vect.at(end);
-    int i = start - 1;
-
-    for (int j = start; j < end; ++j) // Changed end - 1 to end
-    {
-        if (vect.at(j) <= pivot)
-        {
-            i++;
-            swap (vect.at(i), vect.at(j));
-            swap (index.at(i), index.at(j));
-
-
-        }
-    }
-
-    // Swap the pivot to its correct position
-    swap (vect.at(i+1), vect.at(end));
-    swap (index.at(i+1), index.at(end));
-    return i + 1;
-}
-
-int newPartition (vectInt& vect, vectInt& index, int start, int end, int pivotPos)
+int newPartition (std::vector<int>& vect, int start, int end)
 {
-    int pivot_value = vect[pivotPos];
-    newSwap(vect, pivotPos, start);
-    newSwap(index, pivotPos, start);
+    std::vector<int> index;
+    fillArray(end - start + 1, index);
+    int r = median(vect, index) + start;
+    int pivot_value = vect[r];
+    newSwap(vect, start, r);
     int i = start;
 
-    for (int j = start + 1; j <= end; j++)
+    for (int j = start + 1; j <= end; ++j)
     {
         if (vect[j] < pivot_value)
         {
             i++;
             newSwap(vect, i, j);
-            newSwap(index, i, j);
         }
     }
 
     newSwap(vect, start, i);
-    newSwap(index, start, i);
     return i;
 }
 
 
-int quickSelect(vectInt& vect, vectInt& index, int p, int q, int i)
+
+int quickSelect(std::vector<int>& vect, int p, int q, int i)
 {
     if (p == q)
-        return index[p];
+        return vect[p];
 
-    vectInt newVect;
-    vectInt newIndex;
-    for(int j=p,k=0; j<=q; ++j, ++k)
-    {
-        newVect.push_back(vect[j]);
-        newIndex.push_back(k);
-    }
-    int pivPosition = median(newVect, newIndex);
-    int pivot = newVect[pivPosition];
-    cout <<"pivot: " << pivot <<endl;
 
-    int r = newPartition(newVect,  newIndex, p, q, pivPosition);
-    cout <<"r: " << r <<endl;
+    int r = newPartition(vect, p, q);
+    // std::cout <<"r: " << r << std::endl;
     
-    printVec(newVect);
 
     int k = r - p + 1;
 
     if (i == k)
-        return index[r];
+        return vect[r];
     else if (i < k)
         {   
-            return quickSelect(newVect, newIndex, p, r - 1, i);
+            return quickSelect(vect, p, r - 1, i);
         } 
     else
         {
-            return quickSelect(newVect, newIndex, r + 1, q, i - k);
+            return quickSelect(vect, r + 1, q, i - k);
         }      
 }
 
-int main()
-{
-    
-    // int m = 27;
-    vectInt vect, index;
-    vect = {1,3,5,4,2,8,7,6,5,1,9,1,1000,2,3,4,8,7,6,4,2,6,6,2,2,1,17,18,1000};
-    int m = vect.size();
-    for(int i=0; i<m; i++)
-    {
-        // vect.push_back(i+1);
-        index.push_back(i);
-    }
-    //vect = {1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43};
-    //printVec(vect);
-    //printVec(index);
-    //shuffle(vect.begin(), vect.end(), default_random_engine(seed));
-    //printVec(vect);
 
-    // int medianIndex = median(vect, index);
-    // cout <<"The median index is " << medianIndex << endl;
-    int ith = 4;
-    int x = quickSelect(vect, index, 0, m-1, ith);
-    cout <<"The " <<ith <<" smallest is " << x << endl;
-    // int x = newPartition(vect, index, 0, m-1, medianIndex);
-    // printVec(vect);
-    // cout <<"x: " << x <<endl;
-    // cout << "vector size: " << vect.size() <<endl;
-    return 0;
+
+
+
+
+#define N 1500000
+#define seed 1049087
+#define i (N - 1)
+
+int main(int argc, char** argv)
+{
+    std::vector<int> array;
+    fillArray(N, array);
+    // printArray(array);
+    std::cout << "The " << i << "th smallest element is " << array[i - 1] << std::endl;
+
+
+    shuffleArray(array, seed);
+    // printArray(array);
+    std::vector<int> array2 = array;
+    std::cout << "The " << i << "th smallest element is " << rand_select(array, 0, N - 1, i) << std::endl;
+
+    std::cout << std::endl;
+    // printArray(array2);
+    std::cout << "The " << i << "th smallest element is " << quickSelect(array2, 0, N-1, i) << std::endl;
+
+
+
+    return 0;    
 }
