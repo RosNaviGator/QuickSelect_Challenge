@@ -1,5 +1,5 @@
 # Ignore compiled binaries
-challenge
+singleFile/challenge
 
 # Ignore IDE and editor specific files
 .vscode/
