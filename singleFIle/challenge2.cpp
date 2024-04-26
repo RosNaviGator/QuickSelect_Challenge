@@ -2,6 +2,8 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include <omp.h>
+
 
 // Function to swap two elements in a vector
 void newSwap(std::vector<int>& vect, int i, int j)
@@ -208,10 +210,16 @@ int median(std::vector<int>& vect, std::vector<int>& index)
    }
    int blocks = index.size()/5;
    std::vector<int> vect2;
-   for(int i=0; i<blocks; ++i)
+
+   #pragma omp parallel
    {
-    vect2.push_back(newSort(vect, index, i));
-   } 
+        #pragma omp for
+        for(int i=0; i<blocks; ++i)
+        {
+            vect2.push_back(newSort(vect, index, i));
+        }
+   }
+
    //cout <<"vect2: ";
    //printVec(vect2);
    //printVec(vect2);
@@ -279,7 +287,7 @@ int quickSelect(std::vector<int>& vect, int p, int q, int i)
 
 #define N 22
 #define seed 10490
-#define i N
+#define i N/3
 
 int main(int argc, char** argv)
 {
