@@ -291,18 +291,18 @@ int quickSelect(std::vector<int>& vect, int p, int q, int i)
 
 
 
-#define N 100000000
-#define seed 170490
+#define N 1000
+#define seed 17049
 
 
 int main(int argc, char** argv)
 {
     int z = 0;
     
-    for ( int M = 20000000; M < N; M++)
+    for ( int M = N-1; M < N; M++)
     {
         std::cout << "M: " << M <<"/" <<N <<std::endl;
-        for(int i = 1; i <= M; i++)
+        for(int i = M/3; i <= M; i++)
         {
             //std:: cout << "M: " << M << " i: " << i << std::endl;
             std::vector<int> array;
