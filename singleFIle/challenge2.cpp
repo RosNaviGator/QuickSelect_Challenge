@@ -19,6 +19,18 @@ void fillArray(int size, std::vector<int> &array) {
     }
 }
 
+void fillArrayWithDuplicates(int size, std::vector<int> &array) {
+    for (int i = 0; i < size; ++i) {
+        array.push_back(i % 10);
+    }
+}
+
+void fillArrayWithOnes(int size, std::vector<int> &array) {
+    for (int i = 0; i < size; ++i) {
+        array.push_back(1);
+    }
+}
+
 // array print
 void printArray(std::vector<int> &array) {
     for (int i = 0; i < array.size(); ++i) {
@@ -239,11 +251,15 @@ int quickSelect(std::vector<int>& vect, int p, int q, int i)
 
 
     int r = newPartition(vect, p, q);
-    // std::cout <<"r: " << r << std::endl;
+    /*std::cout <<"r: " << r << std::endl;
+    std::cout << "p: " << p << std::endl;
+    std::cout << "q: " << q << std::endl;
+    std::cout << "i - k: " << i - (r - p + 1) << std::endl;
     
+    std::cout <<"k: " << (r - p + 1) << std::endl;
+    std::cout << std::endl;*/
 
     int k = r - p + 1;
-
     if (i == k)
         return vect[r];
     else if (i < k)
@@ -261,14 +277,17 @@ int quickSelect(std::vector<int>& vect, int p, int q, int i)
 
 
 
-#define N 1500000
-#define seed 1049087
-#define i (N - 1)
+#define N 22
+#define seed 10490
+#define i N
 
 int main(int argc, char** argv)
 {
     std::vector<int> array;
     fillArray(N, array);
+    // array.push_back(100);
+
+    // std::sort(array.begin(), array.end());
     // printArray(array);
     std::cout << "The " << i << "th smallest element is " << array[i - 1] << std::endl;
 
@@ -279,7 +298,7 @@ int main(int argc, char** argv)
     std::cout << "The " << i << "th smallest element is " << rand_select(array, 0, N - 1, i) << std::endl;
 
     std::cout << std::endl;
-    // printArray(array2);
+    printArray(array2);
     std::cout << "The " << i << "th smallest element is " << quickSelect(array2, 0, N-1, i) << std::endl;
 
 
