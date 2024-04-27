@@ -138,72 +138,73 @@ int bubbleSort(std::vector<int> &values, std::vector<int> &index, int block) // 
     return index[2 + 5 * block];
 }
 
-int newSort(std::vector<int> &vect, std::vector<int> &index, int i) // Sorting 5 entries vector (efficient in this case)
+
+int newSort(std::vector<int> &vect, int i) // Sorting 5 entries vector (efficient in this case)
 {
     i = 5 * i;
 
-    if (vect[index[i + 1]] < vect[index[i]])
+    if (vect[i + 1] < vect[i])
     {
-        std::swap(index[i], index[i + 1]);
+        newSwap(vect, i, i + 1);
     }
-    if (vect[index[i + 3]] < vect[index[i + 2]])
+    if (vect[i + 3] < vect[i + 2])
     {
-        std::swap(index[i + 2], index[i + 3]);
+        newSwap(vect, i + 2, i + 3);
     }
-    if (vect[index[i + 3]] < vect[index[i + 1]])
+    if (vect[i + 3] < vect[i + 1])
     {
-        std::swap(index[i], index[i + 2]);
-        std::swap(index[i + 1], index[i + 3]);
+        newSwap(vect, i, i + 2);
+        newSwap(vect, i + 1, i + 3);
     }
-    if (vect[index[i + 4]] < vect[index[i + 1]])
+    if (vect[i + 4] < vect[i + 1])
     {
-        if (vect[index[i + 4]] < vect[index[i]])
+        if (vect[i + 4] < vect[i])
         {
-            moveElement(index, i + 4, i);
-            newSwap(index, i + 4, i + 3);
+            moveElement(vect, i + 4, i);
+            newSwap(vect, i + 4, i + 3);
         }
         else
         {
-            moveElement(index, i + 4, i + 1);
-            newSwap(index, i + 4, i + 3);
+            moveElement(vect, i + 4, i + 1);
+            newSwap(vect, i + 4, i + 3);
         }
     }
     else
     {
-        if (vect[index[i + 4]] < vect[index[i + 3]])
+        if (vect[i + 4] < vect[i + 3])
         {
-            moveElement(index, i + 4, i + 2);
-            newSwap(index, i + 4, i + 3);
+            moveElement(vect, i + 4, i + 2);
+            newSwap(vect, i + 4, i + 3);
         }
         else
         {
-            moveElement(index, i + 4, i + 3);
-            newSwap(index, i + 4, i + 2);
+            moveElement(vect, i + 4, i + 3);
+            newSwap(vect, i + 4, i + 2);
         }
     }
-    if (vect[index[i + 4]] < vect[index[i + 1]])
+    if (vect[i + 4] < vect[i + 1])
     {
-        if (vect[index[i + 4]] < vect[index[i]])
+        if (vect[i + 4] < vect[i])
         {
-            moveElement(index, i + 4, i);
+            moveElement(vect, i + 4, i);
         }
         else
         {
-            moveElement(index, i + 4, i + 1);
+            moveElement(vect, i + 4, i + 1);
         }
     }
     else
     {
-        if (vect[index[i + 4]] < vect[index[i + 2]])
+        if (vect[i + 4] < vect[i + 2])
         {
-            moveElement(index, i + 4, i + 2);
+            moveElement(vect, i + 4, i + 2);
         }
         else
         {
-            moveElement(index, i + 4, i + 3);
+            moveElement(vect, i + 4, i + 3);
         }
     }
-    return index[i + 2];
+    return vect[i + 2];
 }
 
 int median(std::vector<int> &vect, std::vector<int> &index) // finding index of median of medians
@@ -220,7 +221,7 @@ int median(std::vector<int> &vect, std::vector<int> &index) // finding index of 
     std::vector<int> vect2;
     for (int i = 0; i < blocks; ++i)
     {
-        vect2.push_back(newSort(vect, index, i));
+        vect2.push_back(newSort(vect, i));
     }
     // cout <<"vect2: ";
     // printVec(vect2);
@@ -276,11 +277,7 @@ int randPartition(std::vector<int>& vect, int start, int end)
 }
 
 
-void swap(int& a, int& b) {
-    int temp = a;
-    a = b;
-    b = temp;
-}
+
 
 int partition(std::vector<int>& vect, int start, int end) {
     int pivot = vect[end];
@@ -289,10 +286,10 @@ int partition(std::vector<int>& vect, int start, int end) {
     for (int j = start; j < end; j++) {
         if (vect[j] < pivot) {
             i++;
-            swap(vect[i], vect[j]);
+            newSwap(vect, i, j);
         }
     }
-    swap(vect[i + 1], vect[end]);
+    newSwap(vect, i + 1, end);
     return i + 1;
 }
 
