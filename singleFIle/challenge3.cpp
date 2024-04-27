@@ -313,14 +313,15 @@ int medianOf5(std::vector<int> &vect, int start)
 
 std::vector<int> mediansVector(std::vector<int> &vect, int p, int q)
 {
-    int blockNum = (q - p + 1) / 5;
-    std::vector<int> output(blockNum);
     if ((q - p + 1) < 5)
     {
+        std::vector<int> output;
         output.push_back(vect[(p + q) / 2]);
         return output;
     }
     
+    int blockNum = (q - p + 1) / 5;
+    std::vector<int> output(blockNum);
 
     #pragma omp parallel
     {
