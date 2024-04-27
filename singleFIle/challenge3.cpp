@@ -141,7 +141,6 @@ int bubbleSort(std::vector<int> &values, std::vector<int> &index, int block) // 
 
 int newSort(std::vector<int> &vect, int i) // Sorting 5 entries vector (efficient in this case)
 {
-    i = 5 * i;
 
     if (vect[i + 1] < vect[i])
     {
@@ -322,7 +321,7 @@ std::vector<int> mediansVector(std::vector<int> &vect, int p, int q)
 
     for (int i = 0; i < blockNum; ++i)
     {
-        output.push_back(medianOf5(vect, p + i * 5));
+        output.push_back(newSort(vect, p + i * 5));
     }
 
     return output;
