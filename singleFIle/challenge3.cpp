@@ -253,12 +253,20 @@ int newPartition(std::vector<int> &vect, int start, int end)
     return i;
 }
 
+
+int randomPos(int start, int end)
+{
+    int random_number = start + rand() % (end - start);
+    return random_number;
+
+}
+
+
 int randPartition(std::vector<int>& vect, int start, int end)
 {   
-
-    srand(time(NULL));
+    
     // Genera un numero casuale nell'intervallo [start, end - 1]
-    int rP = start -1 + std::rand() % (end - start);
+    int rP = randomPos(start, end);
 
     newSwap (vect, rP, end);
     int pivot = vect.at(end);
@@ -281,7 +289,7 @@ int randPartition(std::vector<int>& vect, int start, int end)
 
 
 
-int partition(std::vector<int>& vect, int start, int end) {
+int quickPartition(std::vector<int>& vect, int start, int end) {
     int pivot = vect[end];
     int i = start - 1;
     
@@ -297,10 +305,11 @@ int partition(std::vector<int>& vect, int start, int end) {
 
 void quickSort(std::vector<int>& vect, int start, int end) {
     if (start < end) {
-        int pivotIndex = partition(vect, start, end);
+        int pivotIndex = randPartition(vect, start, end);
         quickSort(vect, start, pivotIndex - 1);
         quickSort(vect, pivotIndex + 1, end);
     }
+
 }
 
 
@@ -323,15 +332,15 @@ std::vector<int> mediansVector(std::vector<int> &vect, int p, int q)
     int blockNum = (q - p + 1) / 5;
     std::vector<int> output(blockNum);
 
-    #pragma omp parallel
-    {
-        #pragma omp for 
+    
         for (int i = 0; i < blockNum; ++i)
         {
+            //quickSort(vect, p + i * 5, p + i * 5 + 4);
+            //output[i] = vect[p + i * 5 + 2];
+            //std::cout<<"output[i]: " << output[i] <<std::endl;
             output[i] = (newSort(vect, p + i * 5));
         }
 
-    }
 
     return output;
 }
@@ -422,42 +431,41 @@ int select(std::vector<int> &vect, int p, int q, int i)
 }
 
 
-#define N 250000
-#define seed 2704
+#define N 100
+#define seed 270424
 
 int main()
 {
 
     std::srand(std::time(nullptr));
 
-    std::vector<int> vect, index;
+    std::vector<int> vect;
     fillArray(N, vect);
-    fillArray(N, index);
     //fillArrayWithDuplicates(N, vect);
     shuffleArray(vect, seed);
 
     //add chrono
     auto start1 = std::chrono::high_resolution_clock::now();
-    int x = select(vect, 0, N-1, 252);
+    int x = select(vect, 0, N-1, 50);
     auto end1 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
 
+    //std::cout << "select duration with newSort: " << duration1.count() << std::endl;
+    //std::cout << "x = " << x <<std::endl;
+
+    
     //add chrono
     auto start2 = std::chrono::high_resolution_clock::now();
-    int y = rand_select(vect, 0 , N-1, 252);
+    int y = rand_select(vect, 0 , N-1, 50);
     auto end2 = std::chrono::high_resolution_clock::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2 - start2);
 
-    std::cout << "select duration: " << duration1.count() << std::endl;
+    std::cout << "select duration with newSort: " << duration1.count() << std::endl;
     std::cout << "rand_select duration: " << duration2.count() << std::endl;
 
 
     std::cout << "x = " << x <<std::endl;
     std::cout << "y = " << y <<std::endl;
-
-
-
-
 
 }
 
