@@ -3,6 +3,9 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <omp.h>
+
+
 
 void newSwap(std::vector<int> &vect, int i, int j) // swap two elements in a vector
 {
@@ -310,18 +313,23 @@ int medianOf5(std::vector<int> &vect, int start)
 
 std::vector<int> mediansVector(std::vector<int> &vect, int p, int q)
 {
-    std::vector<int> output;
+    int blockNum = (q - p + 1) / 5;
+    std::vector<int> output(blockNum);
     if ((q - p + 1) < 5)
     {
         output.push_back(vect[(p + q) / 2]);
         return output;
     }
+    
 
-    int blockNum = (q - p + 1) / 5;
-
-    for (int i = 0; i < blockNum; ++i)
+    #pragma omp parallel
     {
-        output.push_back(newSort(vect, p + i * 5));
+        #pragma omp for 
+        for (int i = 0; i < blockNum; ++i)
+        {
+            output[i] = (newSort(vect, p + i * 5));
+        }
+
     }
 
     return output;
@@ -414,7 +422,7 @@ int select(std::vector<int> &vect, int p, int q, int i)
 
 
 #define N 250000
-#define seed 270424
+#define seed 2704
 
 int main()
 {
