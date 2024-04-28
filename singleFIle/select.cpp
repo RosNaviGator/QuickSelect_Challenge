@@ -5,9 +5,6 @@
 #include <chrono>
 #include <fstream>
 
-
-
-
 void swapElements(std::vector<int> &vect, int i, int j) // swap two elements in a vector
 {
     int temp = vect[i];
@@ -217,6 +214,9 @@ int select(std::vector<int> &vect, int p, int q, int i) // select the ith order 
 
 void tableResults(int M, int seed)
 {
+    std::random_device rd;
+    std::mt19937 generator(rd());
+
     // Remove any previous version of the CSV file
     std::remove("data.csv");
 
@@ -232,35 +232,36 @@ void tableResults(int M, int seed)
     }
 
     std::cout << "Generating data..." << std::endl;
-    for (int N = 1; N < M; N += M/1000)
+    for (int N = 1; N < M; N += M / 1000)
     {
-        if(N % (M/10) == 1)
+        if (N % (M / 10) == 1)
         {
-            std::cout << "Progress: " << N / (M/10) * 10 << "%" << std::endl;
+            std::cout << "Progress: " << N / (M / 10) * 10 << "%" << std::endl;
         }
 
         std::vector<int> vect;
         fillVector(N, vect);
         shuffleVector(vect, seed);
 
+        std::uniform_int_distribution<int> distribution(1, N); // Define uniform distribution for integers between 1 and N
+        int rand_i = distribution(generator);                  // Generate random integer between 1 and N
+
         auto start = std::chrono::high_resolution_clock::now();
-        int x = select(vect, 0, N - 1, N/3);
+        int x = select(vect, 0, N - 1, rand_i);
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
         file << N << "," << duration.count() << std::endl;
     }
-    std::cout << "Progress: 100%" << std::endl << std::endl << "data.csv is ready!" << std::endl;
+    std::cout << "Progress: 100%" << std::endl
+              << std::endl
+              << "data.csv is ready!" << std::endl;
     file.close();
 }
-
-
-
 
 #define N 10000
 #define i N / 4 * 3 + 1
 #define M 1000000
-
 
 int main()
 {
@@ -356,10 +357,8 @@ int main()
               << std::endl
               << std::endl;
 
-    
-
     // Let's generate some data bitchez!
     tableResults(M, seed);
-    
+
     return 0;
 }
