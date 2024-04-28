@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <random>
 #include <chrono>
+#include <fstream>
+
+
 
 
 void swapElements(std::vector<int> &vect, int i, int j) // swap two elements in a vector
@@ -26,6 +29,11 @@ void fillVectorWithDuplicates(int size, std::vector<int> &vect) // vector of int
     {
         vect.push_back(i % 10);
     }
+}
+
+void sortVector(std::vector<int> &vect) // sort vector
+{
+    std::sort(vect.begin(), vect.end());
 }
 
 void fillVectorWithOnes(int size, std::vector<int> &vect) // vector of 1s
@@ -207,22 +215,144 @@ int select(std::vector<int> &vect, int p, int q, int i) // select the ith order 
         return select(vect, p + lessNum + 1, q, i - k);
 }
 
+void tableResults(int M, int seed)
+{
+    // Remove any previous version of the CSV file
+    std::remove("data.csv");
 
-#define N 100
-#define i 50
-#define seed 270424
+    // Open the CSV file for writing
+    std::ofstream file("data.csv");
+
+    // Check if the file opened successfully
+    if (!file.is_open())
+    {
+        // File doesn't exist, create it
+        std::cout << "File doesn't exist. Creating a new file." << std::endl;
+        file.open("data.csv", std::ofstream::out | std::ofstream::trunc);
+    }
+
+    for (int N = 5; N < M; N += 100)
+    {
+        std::vector<int> vect;
+        fillVector(N, vect);
+        shuffleVector(vect, seed);
+
+        auto start = std::chrono::high_resolution_clock::now();
+        int x = select(vect, 0, N - 1, N/3);
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+
+        file << N << "," << duration.count() << std::endl;
+    }
+    file.close();
+}
+
+
+
+
+#define N 10000
+#define i N / 4 * 3 + 1
+#define M 1000000
+
 
 int main()
 {
+    int seed = 280424;
+
+    // Parameters
+    // 1. ordered or not
+    // 2. duplicates or not
+    // 3. incomplete sequence
+
+    // First we create a vector with integers from 0 to N-1 in order
     std::vector<int> vect;
     fillVector(N, vect);
-    shuffleVector(vect, seed);
+    std::cout << "First vector: no duplicates" << std::endl;
+    std::cout << "N = " << N << std::endl;
+    std::cout << "i = " << i << std::endl
+              << std::endl;
 
-    auto start = std::chrono::high_resolution_clock::now();
+    // The i-th smallest element can be retrieved trivially by vect[i-1]
+    std::cout << "The i-th smallest element can be retrieved trivially by vect[i-1] because it's generated in order" << std::endl;
+    std::cout << "In this case the " << i << "th element is: " << vect[i - 1] << std::endl
+              << std::endl;
+
+    // Let's see if the select function can retrieve the correct i-th order statistic in a ordered vector with no duplicates
+    std::cout << "Result using the 'select' function on the ordered vector:" << std::endl;
+
+    auto startOrd = std::chrono::high_resolution_clock::now();
     int x = select(vect, 0, N - 1, i);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    auto endOrd = std::chrono::high_resolution_clock::now();
+    auto durationOrd = std::chrono::duration_cast<std::chrono::nanoseconds>(endOrd - startOrd);
 
-    std::cout << "The " << i << "th order statistic is: " << x << std::endl;
-    std::cout << "Time taken: " << duration.count() << " nanoseconds" << std::endl;
+    std::cout << x << std::endl;
+    std::cout << "Time taken: " << durationOrd.count() << " nanoseconds" << std::endl
+              << std::endl;
+
+    // Now we shuffle the vector
+    shuffleVector(vect, seed);
+    // Let's see if the result is the same
+    std::cout << "Result using the 'select' function on the same vector shuffled:" << std::endl;
+
+    auto startShuff = std::chrono::high_resolution_clock::now();
+    int y = select(vect, 0, N - 1, i);
+    auto endShuff = std::chrono::high_resolution_clock::now();
+    auto durationShuff = std::chrono::duration_cast<std::chrono::nanoseconds>(endShuff - startShuff);
+
+    std::cout << y << std::endl;
+    std::cout << "Time taken: " << durationShuff.count() << " nanoseconds" << std::endl
+              << std::endl
+              << "--------------------------------------------------"
+              << std::endl
+              << std::endl;
+
+    // Now we fill the vector with duplicates
+    vect.clear();
+    fillVectorWithDuplicates(N, vect);
+    std::cout << "Second vector: generated with duplicates" << std::endl;
+    std::cout << "N = " << N << std::endl;
+    std::cout << "i = " << i << std::endl
+              << std::endl;
+
+    // The i-th smallest element can be retrieved trivially by vect[i-1] AFTER sorting the vector
+    std::cout << "The i-th smallest element can be retrieved trivially by vect[i-1] after sorting it" << std::endl;
+    sortVector(vect);
+    std::cout << "The " << i << "th element is: " << vect[i - 1] << std::endl
+              << std::endl;
+
+    // Let's see if the select function can retrieve the correct i-th order statistic in a ordered vector with no duplicates
+    std::cout << "Result using the 'select' function on the ordered vector:" << std::endl;
+
+    auto startOrdDup = std::chrono::high_resolution_clock::now();
+    int x1 = select(vect, 0, N - 1, i);
+    auto endOrdDup = std::chrono::high_resolution_clock::now();
+    auto durationOrdDup = std::chrono::duration_cast<std::chrono::nanoseconds>(endOrdDup - startOrdDup);
+
+    std::cout << x1 << std::endl;
+    std::cout << "Time taken: " << durationOrdDup.count() << " nanoseconds" << std::endl
+              << std::endl;
+
+    // Now we shuffle the vector
+    shuffleVector(vect, seed);
+    // Let's see if the result is the same
+    std::cout << "Result using the 'select' function on the same vector shuffled:" << std::endl;
+
+    auto startShuffDup = std::chrono::high_resolution_clock::now();
+    int y1 = select(vect, 0, N - 1, i);
+    auto endShuffDup = std::chrono::high_resolution_clock::now();
+    auto durationShuffDup = std::chrono::duration_cast<std::chrono::nanoseconds>(endShuffDup - startShuffDup);
+
+    std::cout << y1 << std::endl;
+    std::cout << "Time taken: " << durationShuffDup.count() << " nanoseconds" << std::endl
+              << std::endl
+              << "--------------------------------------------------"
+              << std::endl
+              << std::endl;
+
+    
+
+    // Let's generate some data bitchez!
+    tableResults(M, seed);
+    
+    return 0;
 }
