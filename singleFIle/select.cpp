@@ -231,8 +231,14 @@ void tableResults(int M, int seed)
         file.open("data.csv", std::ofstream::out | std::ofstream::trunc);
     }
 
-    for (int N = 5; N < M; N += 100)
+    std::cout << "Generating data..." << std::endl;
+    for (int N = 1; N < M; N += M/1000)
     {
+        if(N % (M/10) == 1)
+        {
+            std::cout << "Progress: " << N / (M/10) * 10 << "%" << std::endl;
+        }
+
         std::vector<int> vect;
         fillVector(N, vect);
         shuffleVector(vect, seed);
@@ -244,6 +250,7 @@ void tableResults(int M, int seed)
 
         file << N << "," << duration.count() << std::endl;
     }
+    std::cout << "Progress: 100%" << std::endl << std::endl << "data.csv is ready!" << std::endl;
     file.close();
 }
 
