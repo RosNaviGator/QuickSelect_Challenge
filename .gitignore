@@ -7,3 +7,6 @@ challenge
 
 # Ignore OS generated files
 .DS_Store
+
+# ignore ipynb checkpoints
+.ipynb_checkpoints/
