@@ -15,7 +15,7 @@ Find the i-th smallest element in an unsorted array, linearly time in the worst-
 
 ### .ipynb nootebook
 The notebook is a standalone, the whole project is explained and implemented on it, including the GoogleBenchmark study at the end.
-
+- It can be simply opened in Google Colab or any Notebook reader (C++, python with matplotlib are required)
 
 ### cppFiles (old)
 - challenge2.cpp
