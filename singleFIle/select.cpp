@@ -357,7 +357,7 @@ int main()
               << std::endl
               << std::endl;
 
-    // Let's generate some data bitchez!
+    // Create the data.csv file with N and time taken to find the i-th order statistic
     tableResults(M, seed);
 
     return 0;
