@@ -26,5 +26,6 @@ The notebook is self-contained, providing a comprehensive explanation and implem
 - challenge2.cpp
 - challenge3.cpp
 - select.cpp
+- testScripts.cpp
 
-These CPP files are previous versions of the project, with select.cpp being the final iteration. Each file is standalone, containing main and all required functions. No classes were used in this project, as the primary goal was to achieve a specific threshold in terms of Google Benchmark performance. Compilation requires any standard compiler, as only standard C++ libraries are utilized.
+These CPP files are previous versions of the project or test files, with select.cpp being the final version of the algorithm before moving it to a .ipynb notebook. Each file is standalone, containing main and all required functions. No classes were used in this project, as the primary goal was to achieve a specific threshold in terms of Google Benchmark performance, thus low level coding was the best choice. Compilation requires any standard compiler of C++, only standard C++ libraries are utilized.
